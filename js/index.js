@@ -55,9 +55,9 @@ function processBook(event) {
 form.addEventListener('submit', processBook);
 
 fetch(
-  'https://raw.githubusercontent.com/benoitvallon/100-best-books/master/books.json'
+  'https://raw.githubusercontent.com/benoitvallon/100-best-books/master/books.json',
 )
-  .then((response) => response.json())
+  .then(response => response.json())
   .then((data) => {
     data.slice(0, 10).forEach((book) => {
       addBookToLibrary(book);
