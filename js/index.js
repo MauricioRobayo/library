@@ -1,4 +1,4 @@
-const BOOKS_URL = 'https://raw.githubusercontent.com/benoitvallon/100-best-books/master/books.json';
+const BOOKS_URL = 'https://raw.githubusercontent.com/benoitvallon/100-best-books/master/';
 const form = document.querySelector('#library-form');
 const newBookBtn = document.querySelector('#new-book');
 const library = [];
@@ -98,11 +98,11 @@ function processBook(event) {
 form.addEventListener('submit', processBook);
 newBookBtn.addEventListener('click', bringUpForm);
 
-fetch(BOOKS_URL)
+fetch(`${BOOKS_URL}/books.json`)
   .then((response) => response.json())
   .then((data) => {
     data.slice(0, 4).forEach((book) => {
-      book.imageLink = `https://raw.githubusercontent.com/benoitvallon/100-best-books/master/static/${book.imageLink}`;
+      book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
       addBookToLibrary(book);
     });
   });
