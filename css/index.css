@@ -1,0 +1,7 @@
+#library-form {
+  display: none;
+}
+
+#library-form.active {
+  display: block;
+}
