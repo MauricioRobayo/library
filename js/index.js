@@ -1,8 +1,18 @@
 const BOOKS_URL = 'https://raw.githubusercontent.com/benoitvallon/100-best-books/master/';
 const STORAGE_PREFIX = 'MauOsc';
+const PAGE_SIZE = 2;
 const form = document.querySelector('#library-form');
 const newBookBtn = document.querySelector('#new-book');
+const prevPageBtn = document.querySelector('#prev-page');
+const nextPageBtn = document.querySelector('#next-page');
+const firstPageBtn = document.querySelector('#first-page');
+const lastPageBtn = document.querySelector('#last-page');
 const library = [];
+let currentPage = 0;
+
+function lastPage() {
+  return Math.floor((library.length - 1) / PAGE_SIZE);
+}
 
 function storageAvailable(type) {
   let storage;
@@ -60,7 +70,7 @@ class Book {
 
   render(index) {
     const bookContainer = document.createElement('div');
-    bookContainer.id = index;
+    bookContainer.id = currentPage * PAGE_SIZE + index;
     bookContainer.classList.add('book-container');
 
     this.addElement(bookContainer, 'imageLink', (itm, dat) => {
@@ -113,6 +123,7 @@ function storeLibrary() {
 }
 
 function loadLibrary(addBookFn) {
+  library.length = 0;
   let idx = 0;
   let key = Book.dbBookKey(idx);
   while (localStorage.getItem(key)) {
@@ -121,11 +132,11 @@ function loadLibrary(addBookFn) {
   }
 }
 
-function render() {
+function render(page = currentPage) {
   const libraryContainer = document.querySelector('#library');
   const libContainer = document.createElement('div');
   libContainer.id = 'library';
-  library.forEach((book, index) => {
+  library.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).forEach((book, index) => {
     const bookElement = book.render(index);
     libContainer.appendChild(bookElement);
   });
@@ -136,6 +147,7 @@ function render() {
       library.splice(index, 1);
       render();
       storeLibrary();
+      localStorage.removeItem(Book.dbBookKey(library.length));
     }
     if (event.target.classList.contains('read-book')) {
       const index = event.target.parentElement.id;
@@ -169,6 +181,7 @@ function processBook(event) {
     book[key] = value;
   });
   addBookToLibrary(book);
+  currentPage = lastPage();
   render();
   storeLibrary();
   form.classList.remove('active');
@@ -177,14 +190,21 @@ function processBook(event) {
 form.addEventListener('submit', processBook);
 newBookBtn.addEventListener('click', bringUpForm);
 
+prevPageBtn.addEventListener('click', () => { if (currentPage > 0) { render(currentPage -= 1); } });
+nextPageBtn.addEventListener('click', () => { if (currentPage < lastPage()) { render(currentPage += 1); } });
+
+firstPageBtn.addEventListener('click', () => { render(currentPage = 0); });
+lastPageBtn.addEventListener('click', () => { render(currentPage = lastPage()); });
+
 if (storageAvailable('localStorage') && localStorage.getItem(Book.dbBookKey(0))) {
   loadLibrary(addBookToLibrary);
+  currentPage = 0;
   render();
 } else {
   fetch(`${BOOKS_URL}/books.json`)
-    .then(response => response.json())
+    .then((response) => response.json())
     .then((data) => {
-      data.slice(0, 4).forEach((book) => {
+      data.forEach((book) => {
         book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
         addBookToLibrary(book);
       });
