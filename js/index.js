@@ -145,6 +145,9 @@ function render(page = currentPage) {
     if (event.target.classList.contains('delete-book')) {
       const index = event.target.parentElement.id;
       library.splice(index, 1);
+      if (currentPage > lastPage()) {
+        currentPage = lastPage();
+      }
       render();
       storeLibrary();
       localStorage.removeItem(Book.dbBookKey(library.length));
