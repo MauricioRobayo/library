@@ -205,7 +205,7 @@ if (storageAvailable('localStorage') && localStorage.getItem(Book.dbBookKey(0)))
   render();
 } else {
   fetch(`${BOOKS_URL}/books.json`)
-    .then((response) => response.json())
+    .then(response => response.json())
     .then((data) => {
       data.forEach((book) => {
         book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
