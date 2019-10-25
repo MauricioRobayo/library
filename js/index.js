@@ -51,20 +51,43 @@ class Book {
     return this.read;
   }
 
+  addElement(container, name, prepareFn = (itm, dat) => { dat.textContent = itm; }) {
+    const data = document.createElement('div');
+    data.classList.add(`book-${name}`);
+    prepareFn(this[name], data);
+    container.appendChild(data);
+  }
+
   render(index) {
-    const bookContainer = document.createElement('div');
+    const bookContainer = document.createDocumentFragment('div');
     bookContainer.id = index;
-    Object.keys(this).forEach((key) => {
-      const data = document.createElement('div');
-      data.innerText = this[key];
-      bookContainer.appendChild(data);
+
+    this.addElement(bookContainer, 'title');
+    this.addElement(bookContainer, 'author', (itm, dat) => {
+      dat.textContent = `by ${itm}`;
     });
+    this.addElement(bookContainer, 'pages', (itm, dat) => {
+      dat.textContent = `${itm} pages`;
+    });
+    this.addElement(bookContainer, 'imageLink', (itm, dat) => {
+      if (itm !== '') {
+        const image = document.createElement('img');
+        image.src = itm;
+        dat.appendChild(image);
+      }
+    });
+    this.addElement(bookContainer, 'read', (itm, dat) => {
+      dat.textContent = itm ? 'Readed' : 'Unread';
+    });
+
     const deleteBtn = document.createElement('button');
     deleteBtn.innerText = 'Delete';
     deleteBtn.classList.add('delete-book');
+
     const readBtn = document.createElement('button');
     readBtn.classList.add('read-book');
     readBtn.innerText = 'Read';
+    
     bookContainer.append(readBtn, deleteBtn);
     return bookContainer;
   }
