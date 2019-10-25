@@ -61,7 +61,19 @@ class Book {
   render(index) {
     const bookContainer = document.createElement('div');
     bookContainer.id = index;
+    bookContainer.classList.add('book-container');
 
+    this.addElement(bookContainer, 'imageLink', (itm, dat) => {
+      let image;
+      if (itm !== '') {
+        image = document.createElement('img');
+        image.src = itm;
+      } else {
+        image = document.createElement('div');
+        image.textContent = 'No cover available.';
+      }
+      dat.appendChild(image);
+    });
     this.addElement(bookContainer, 'title');
     this.addElement(bookContainer, 'author', (itm, dat) => {
       dat.textContent = `by ${itm}`;
@@ -69,15 +81,8 @@ class Book {
     this.addElement(bookContainer, 'pages', (itm, dat) => {
       dat.textContent = `${itm} pages`;
     });
-    this.addElement(bookContainer, 'imageLink', (itm, dat) => {
-      if (itm !== '') {
-        const image = document.createElement('img');
-        image.src = itm;
-        dat.appendChild(image);
-      }
-    });
     this.addElement(bookContainer, 'read', (itm, dat) => {
-      dat.textContent = itm ? 'Readed' : 'Unread';
+      dat.textContent = itm ? '✓ read' : '✗ read';
     });
 
     const deleteBtn = document.createElement('button');
@@ -124,7 +129,7 @@ function render() {
     const bookElement = book.render(index);
     libContainer.appendChild(bookElement);
   });
-  document.body.replaceChild(libContainer, libraryContainer);
+  document.querySelector('.main').replaceChild(libContainer, libraryContainer);
   libContainer.addEventListener('click', (event) => {
     if (event.target.classList.contains('delete-book')) {
       const index = event.target.parentElement.id;
@@ -177,7 +182,7 @@ if (storageAvailable('localStorage') && localStorage.getItem(Book.dbBookKey(0)))
   render();
 } else {
   fetch(`${BOOKS_URL}/books.json`)
-    .then(response => response.json())
+    .then((response) => response.json())
     .then((data) => {
       data.slice(0, 4).forEach((book) => {
         book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
