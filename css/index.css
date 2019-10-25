@@ -101,3 +101,10 @@ button, input[type="submit"] {
 .read-book {
   grid-area: read-btn;
 }
+.paging-panel {
+  display: flex;
+  justify-content: space-between;
+}
+.paging-panel button {
+  width: 100px;
+}
