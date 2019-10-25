@@ -11,7 +11,6 @@ class Book {
     imageLink,
     read = false,
   }) {
-    this.readSatusBtn = null;
     this.author = author;
     this.title = title;
     this.pages = `${pages}`;
@@ -19,27 +18,27 @@ class Book {
     this.read = !!read;
   }
 
-  toggleBookStatus() {
-    this.read = !this.read;
-    this.readSatusBtn.classList.toggle('active');
+  set readStatus(status) {
+    this.read = status;
+  }
+
+  get readStatus() {
+    return this.read;
   }
 
   render(index) {
     const bookContainer = document.createElement('div');
     bookContainer.id = index;
     Object.keys(this).forEach((key) => {
-      if (typeof this[key] === 'string') {
-        const data = document.createElement('div');
-        data.innerText = this[key];
-        bookContainer.appendChild(data);
-      }
+      const data = document.createElement('div');
+      data.innerText = this[key];
+      bookContainer.appendChild(data);
     });
     const deleteBtn = document.createElement('button');
     deleteBtn.innerText = 'Delete';
-    deleteBtn.class = 'delete-book';
+    deleteBtn.classList.add('delete-book');
     const readBtn = document.createElement('button');
-    this.readSatusBtn = readBtn;
-    readBtn.addEventListener('click', this.toggleBookStatus);
+    readBtn.classList.add('read-book');
     readBtn.innerText = 'Read';
     bookContainer.append(readBtn, deleteBtn);
     return bookContainer;
@@ -61,9 +60,14 @@ function render() {
 }
 
 deleteBook = (event) => {
-  if (event.target.class === 'delete-book') {
+  if (event.target.classList.contains('delete-book')) {
     const index = event.target.parentElement.id;
     library.splice(index, 1);
+    render();
+  }
+  if (event.target.classList.contains('read-book')) {
+    const index = event.target.parentElement.id;
+    library[index].readStatus = !library[index].readStatus;
     render();
   }
 };
