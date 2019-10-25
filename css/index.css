@@ -107,4 +107,6 @@ button, input[type="submit"] {
 }
 .paging-panel button {
   width: 100px;
+  background-color: palegreen;
+  color: green;
 }
