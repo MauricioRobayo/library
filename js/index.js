@@ -74,7 +74,6 @@ deleteBook = (event) => {
 
 function addBookToLibrary(book) {
   library.push(new Book(book));
-  render();
 }
 
 function cleanFields() {
@@ -96,6 +95,7 @@ function processBook(event) {
     book[key] = value;
   });
   addBookToLibrary(book);
+  render();
   form.classList.remove('active');
 }
 
@@ -109,4 +109,5 @@ fetch(`${BOOKS_URL}/books.json`)
       book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
       addBookToLibrary(book);
     });
+    render();
   });
