@@ -99,7 +99,7 @@ form.addEventListener('submit', processBook);
 newBookBtn.addEventListener('click', bringUpForm);
 
 fetch(`${BOOKS_URL}/books.json`)
-  .then(response => response.json())
+  .then((response) => response.json())
   .then((data) => {
     data.slice(0, 4).forEach((book) => {
       book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
