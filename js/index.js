@@ -87,7 +87,7 @@ class Book {
     const readBtn = document.createElement('button');
     readBtn.classList.add('read-book');
     readBtn.innerText = 'Read';
-    
+
     bookContainer.append(readBtn, deleteBtn);
     return bookContainer;
   }
