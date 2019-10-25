@@ -59,7 +59,7 @@ class Book {
   }
 
   render(index) {
-    const bookContainer = document.createDocumentFragment('div');
+    const bookContainer = document.createElement('div');
     bookContainer.id = index;
 
     this.addElement(bookContainer, 'title');
@@ -87,7 +87,7 @@ class Book {
     const readBtn = document.createElement('button');
     readBtn.classList.add('read-book');
     readBtn.innerText = 'Read';
-    
+
     bookContainer.append(readBtn, deleteBtn);
     return bookContainer;
   }
@@ -177,7 +177,7 @@ if (storageAvailable('localStorage') && localStorage.getItem(Book.dbBookKey(0)))
   render();
 } else {
   fetch(`${BOOKS_URL}/books.json`)
-    .then(response => response.json())
+    .then((response) => response.json())
     .then((data) => {
       data.slice(0, 4).forEach((book) => {
         book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
