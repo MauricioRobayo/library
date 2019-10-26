@@ -51,6 +51,7 @@ class Book {
     this.pages = `${pages}`;
     this.imageLink = imageLink;
     this.read = !!read;
+    if (!this.imageLink) fetchCover();
   }
 
   set readStatus(status) {
@@ -113,6 +114,19 @@ class Book {
 
   static dbBookKey(idx) {
     return `${STORAGE_PREFIX}.book.${idx}`;
+  }
+
+  fetchCover() {
+    const key = this.title.replace(' ','+');
+    fetch(`https://www.googleapis.com/books/v1/volumes?q=${key}&maxResults=1`)
+    .then((response) => response.json())
+    .then(({items}) => {
+      if (items && items[0]) {
+        this.imageLink = items[0].volumeInfo.imageLinks.thumbnail;
+        console.log(this.imageLink)
+        console.log(items);
+      }
+    })
   }
 }
 
@@ -205,7 +219,7 @@ if (storageAvailable('localStorage') && localStorage.getItem(Book.dbBookKey(0)))
   render();
 } else {
   fetch(`${BOOKS_URL}/books.json`)
-    .then(response => response.json())
+    .then((response) => response.json())
     .then((data) => {
       data.forEach((book) => {
         book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
@@ -215,3 +229,6 @@ if (storageAvailable('localStorage') && localStorage.getItem(Book.dbBookKey(0)))
       storeLibrary();
     });
 }
+
+// const book = new Book({author: 'Isaac asimov', title: 'foundation'});
+// book.findCover();
