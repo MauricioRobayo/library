@@ -51,7 +51,6 @@ class Book {
     this.pages = `${pages}`;
     this.imageLink = imageLink;
     this.read = !!read;
-    if (!this.imageLink) fetchCover();
   }
 
   set readStatus(status) {
@@ -116,15 +115,20 @@ class Book {
     return `${STORAGE_PREFIX}.book.${idx}`;
   }
 
-  fetchCover() {
-    const key = this.title.replace(' ','+');
+  fetchCover(refresh) {
+    const key = this.title.replace(' ','+') + '+' + this.author.replace(' ','+');
     fetch(`https://www.googleapis.com/books/v1/volumes?q=${key}&maxResults=1`)
     .then((response) => response.json())
     .then(({items}) => {
       if (items && items[0]) {
-        this.imageLink = items[0].volumeInfo.imageLinks.thumbnail;
-        console.log(this.imageLink)
+        const info = items[0].volumeInfo
+        console.log(info);
+        this.imageLink = info.imageLinks.thumbnail;
+        this.pages = this.pages || info.pageCount || 0;
+        this.author = this.author || info.authors.join(', ');
+        // this.title = info.title;
         console.log(items);
+        refresh()
       }
     })
   }
@@ -176,7 +180,9 @@ function render(page = currentPage) {
 }
 
 function addBookToLibrary(book) {
-  library.push(new Book(book));
+  const newBook = new Book(book);
+  library.push(newBook);
+  return newBook;
 }
 
 function cleanFields() {
@@ -197,7 +203,13 @@ function processBook(event) {
   Array.from(fd).forEach(([key, value]) => {
     book[key] = value;
   });
-  addBookToLibrary(book);
+
+  const newBook = addBookToLibrary(book);
+  if (!newBook.imageLink || newBook.imageLink == '') newBook.fetchCover(() => {
+    render();
+    storeLibrary();
+  });
+
   currentPage = lastPage();
   render();
   storeLibrary();
