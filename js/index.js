@@ -117,7 +117,7 @@ class Book {
 
   fetchCover(refresh) {
     const key = this.title.replace(' ','+') + '+' + this.author.replace(' ','+');
-    fetch(`https://www.googleapis.com/books/v1/volumes?q=${key}&maxResults=1`)
+    fetch(`https://www.googleapis.com/books/v1/volumes?q=${key}&maxResults=1&orderBy=relevance`)
     .then((response) => response.json())
     .then(({items}) => {
       if (items && items[0]) {
