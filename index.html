@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="css/index.css">
+    <title>Library</title>
+  </head>
+  <body>
+    <main class="main">
+      <header>
+        <h1>Library</h1>
+        <div>
+          <button id="load-sample" class="secondary-button">Load sample books</button>
+          <button id="clear-books" class="secondary-button">Clear all books</button>
+        </div>
+      </header>
+      <button id="new-book">New Book</button>
+      <form id="library-form">
+        <label for="author">Author</label>
+        <input id="author" name="author" type="text" />
+        <label for="title">Title</label>
+        <input id="title" name="title" type="text" />
+        <label for="pages">Pages</label>
+        <input id="pages" name="pages" type="number" />
+        <div>
+          <label for="read">Read</label>
+          <input id="read" name="read" type="checkbox">
+        </div>
+        <input type="submit" value="Submit" />
+      </form>
+      <div id="library"></div>
+
+      <div class="paging-panel">
+        <div>
+          <button id="first-page">First</button>
+          <button id="prev-page">Previous</button>
+        </div>
+        <div>
+          <button id="next-page">Next</button>
+          <button id="last-page">Last</button>
+        </div>
+      </div>
+
+    </main>
+    <script src="js/index.js"></script>
+  </body>
+</html>
