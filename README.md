@@ -9,4 +9,4 @@ A small library using JavaScript.
 [Oscar Nava](https://github.com/oscarnava) & [Mauricio Robayo](https://github.com/MauricioRobayo).
 
 ## Live site
-[Library](https://raw.githack.com/MauricioRobayo/library/library/index.html)
+[Library](https://mauriciorobayo.github.io/library/)
