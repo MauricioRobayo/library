@@ -43,14 +43,16 @@ class Book {
     author,
     title,
     pages,
-    imageLink,
+    description = '',
+    imageLink = '',
     read = false,
   }) {
     this.author = author;
     this.title = title;
     this.pages = `${pages}`;
-    this.imageLink = imageLink;
     this.read = !!read;
+    this.imageLink = imageLink;
+    this.description = description;
   }
 
   set readStatus(status) {
@@ -88,6 +90,9 @@ class Book {
     this.addElement(bookContainer, 'author', (itm, dat) => {
       dat.textContent = `by ${itm}`;
     });
+    this.addElement(bookContainer, 'description', (itm, dat) => {
+      dat.textContent = `${itm}`;
+    });
     this.addElement(bookContainer, 'pages', (itm, dat) => {
       dat.textContent = `${itm} pages`;
     });
@@ -115,22 +120,25 @@ class Book {
     return `${STORAGE_PREFIX}.book.${idx}`;
   }
 
-  fetchCover(refresh) {
-    const key = this.title.replace(' ','+') + '+' + this.author.replace(' ','+');
-    fetch(`https://www.googleapis.com/books/v1/volumes?q=${key}&maxResults=1&orderBy=relevance`)
-    .then((response) => response.json())
-    .then(({items}) => {
-      if (items && items[0]) {
-        const info = items[0].volumeInfo
-        console.log(info);
-        this.imageLink = info.imageLinks.thumbnail;
-        this.pages = this.pages || info.pageCount || 0;
-        this.author = this.author || info.authors.join(', ');
-        // this.title = info.title;
-        console.log(items);
-        refresh()
-      }
-    })
+  async fetchCover() {
+    const lf = new Intl.ListFormat();
+    const key = `${this.title.replace(' ', '+')}+${this.author.replace(' ', '+')}`;
+    const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${key}&maxResults=1&orderBy=relevance`);
+    const { items: [data] = {} } = await response.json();
+    const {
+      volumeInfo: {
+        pageCount = 0,
+        authors = [],
+        description = '',
+        imageLinks: {
+          thumbnail = '',
+        },
+      },
+    } = data;
+    this.description = description;
+    this.imageLink = thumbnail;
+    this.pages = this.pages || pageCount;
+    this.author = this.author || lf.format(authors);
   }
 }
 
@@ -196,7 +204,7 @@ function bringUpForm() {
   form.classList.add('active');
 }
 
-function processBook(event) {
+async function processBook(event) {
   event.preventDefault();
   const book = {};
   const fd = new FormData(form);
@@ -205,16 +213,43 @@ function processBook(event) {
   });
 
   const newBook = addBookToLibrary(book);
-  if (!newBook.imageLink || newBook.imageLink == '') newBook.fetchCover(() => {
-    render();
-    storeLibrary();
-  });
-
+  if (!newBook.imageLink) {
+    try {
+      await newBook.fetchCover();
+    } catch (e) {
+      newBook.imageLink = '';
+    }
+  }
   currentPage = lastPage();
   render();
   storeLibrary();
   form.classList.remove('active');
 }
+
+async function loadSampleBooks(event) {
+  try {
+    const response = await fetch(`${BOOKS_URL}/books.json`);
+    const data = await response.json();
+    data.forEach((book) => {
+      book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
+      addBookToLibrary(book);
+    });
+    render();
+    storeLibrary();
+    event.target.style.display = 'none';
+  } catch (e) {
+    event.target.style.display = 'block';
+  }
+}
+
+function clearAllBooks() {
+  localStorage.clear();
+  library.length = 0;
+  render();
+}
+
+document.querySelector('#load-sample').addEventListener('click', loadSampleBooks);
+document.querySelector('#clear-books').addEventListener('click', clearAllBooks);
 
 form.addEventListener('submit', processBook);
 newBookBtn.addEventListener('click', bringUpForm);
@@ -229,18 +264,4 @@ if (storageAvailable('localStorage') && localStorage.getItem(Book.dbBookKey(0)))
   loadLibrary(addBookToLibrary);
   currentPage = 0;
   render();
-} else {
-  fetch(`${BOOKS_URL}/books.json`)
-    .then((response) => response.json())
-    .then((data) => {
-      data.forEach((book) => {
-        book.imageLink = `${BOOKS_URL}/static/${book.imageLink}`;
-        addBookToLibrary(book);
-      });
-      render();
-      storeLibrary();
-    });
 }
-
-// const book = new Book({author: 'Isaac asimov', title: 'foundation'});
-// book.findCover();

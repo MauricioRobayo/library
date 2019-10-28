@@ -5,6 +5,18 @@ html {
 *, *:before, *:after {
   box-sizing: inherit;
 }
+header {
+  display: flex;
+  margin-bottom: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.secondary-button {
+  padding: 0.5rem;
+  background-color: peachpuff;
+  color: tomato;
+  border: 2px solid tomato;
+}
 body {
   background-color: lightgray;
   font-family: sans-serif;
@@ -16,6 +28,9 @@ button, input[type="submit"] {
   padding: 0.5rem 0;
   cursor: pointer;
   background-color: limegreen;
+}
+#library {
+  margin: 1rem 0;
 }
 #library-form {
   display: none;
@@ -57,9 +72,21 @@ button, input[type="submit"] {
     "img title title"
     "img author author"
     "img pages pages"
+    "img description description"
     "img read read"
     "img read-btn delete-btn";
 
+}
+.book-description {
+  grid-area: description;
+  font-size: 0.85rem;
+  color: darkgray;
+  max-height: 60px;
+  overflow: hidden;
+  transition: max-height 1s;
+}
+.book-description:hover {
+  max-height: 1000px;
 }
 .book-imageLink {
   grid-area: img;

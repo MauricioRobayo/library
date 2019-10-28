@@ -9,15 +9,19 @@
   </head>
   <body>
     <main class="main">
-      <h1>Library</h1>
+      <header>
+        <h1>Library</h1>
+        <div>
+          <button id="load-sample" class="secondary-button">Load sample books</button>
+          <button id="clear-books" class="secondary-button">Clear all books</button>
+        </div>
+      </header>
       <button id="new-book">New Book</button>
       <form id="library-form">
         <label for="author">Author</label>
         <input id="author" name="author" type="text" />
         <label for="title">Title</label>
         <input id="title" name="title" type="text" />
-        <label for="imageLink">Image url</label>
-        <input id="imageLink" name="imageLink" type="text" />
         <label for="pages">Pages</label>
         <input id="pages" name="pages" type="number" />
         <div>
