@@ -124,17 +124,20 @@ class Book {
     const lf = new Intl.ListFormat();
     const key = `${this.title.replace(' ', '+')}+${this.author.replace(' ', '+')}`;
     const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${key}&maxResults=1&orderBy=relevance`);
-    const { items: [data] = {} } = await response.json();
     const {
-      volumeInfo: {
-        pageCount = 0,
-        authors = [],
-        description = '',
-        imageLinks: {
-          thumbnail = '',
-        },
-      },
-    } = data;
+      items: [
+        {
+          volumeInfo: {
+            pageCount = 0,
+            authors = [],
+            description = '',
+            imageLinks: {
+              thumbnail = '',
+            } = {},
+          } = {},
+        } = {},
+      ] = [],
+    } = await response.json();
     this.description = description;
     this.imageLink = thumbnail;
     this.pages = this.pages || pageCount;
